@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(CalculatorApp());
+}
+
+class CalculatorApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: CalculatorScreen(),
+    );
+  }
+}
+
+class CalculatorScreen extends StatefulWidget {
+  @override
+  _CalculatorScreenState createState() => _CalculatorScreenState();
+}
+
+class _CalculatorScreenState extends State<CalculatorScreen> {
+  String display = '';
+  String input = '';
+  double result = 0.0;
+
+  void _onButtonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == 'C') {
+        display = '';
+        input = '';
+      } else if (buttonText == '=') {
+        try {
+          result = _evaluate(input);
+          display = result.toString();
+        } catch (e) {
+          display = 'Error';
+        }
+      } else {
+        input += buttonText;
+        display = input;
+      }
+    });
+  }
+
+  double _evaluate(String expression) {
+    String sanitizedExpression =
+        expression.replaceAll('x', '*'); // Replace 'x' with '*'
+    try {
+      if (sanitizedExpression.contains('+')) {
+        List<String> parts = sanitizedExpression.split('+');
+        return double.parse(parts[0]) + double.parse(parts[1]);
+      } else if (sanitizedExpression.contains('-')) {
+        List<String> parts = sanitizedExpression.split('-');
+        return double.parse(parts[0]) - double.parse(parts[1]);
+      } else if (sanitizedExpression.contains('*')) {
+        List<String> parts = sanitizedExpression.split('*');
+        return double.parse(parts[0]) * double.parse(parts[1]);
+      } else if (sanitizedExpression.contains('/')) {
+        List<String> parts = sanitizedExpression.split('/');
+        return double.parse(parts[0]) / double.parse(parts[1]);
+      } else {
+        return double.parse(sanitizedExpression);
+      }
+    } catch (e) {
+      return 0.0; // Handle invalid input gracefully
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Simple Calculator'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+            child: Text(
+              display,
+              style: TextStyle(fontSize: 36),
+            ),
+          ),
+          Expanded(
+            child: GridView.builder(
+              itemCount: 16,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return CalculatorButton(
+                  buttonText: CalculatorButton.texts[index],
+                  onPressed: () {
+                    _onButtonPressed(CalculatorButton.texts[index]);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CalculatorButton extends StatelessWidget {
+  final String buttonText;
+
+  CalculatorButton({required this.buttonText, required this.onPressed});
+
+  final Function onPressed;
+
+  static const List<String> texts = [
+    '7', '8', '9', '/',
+    '4', '5', '6', 'x', // Use 'x' for multiplication
+    '1', '2', '3', '-',
+    'C', '0', '=', '+',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: ElevatedButton(
+        onPressed: () => onPressed(),
+        child: Text(
+          buttonText,
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+}
