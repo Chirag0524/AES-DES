@@ -1,0 +1,23 @@
+class Laptop {
+  int id;
+  String name;
+  int ram;
+
+  Laptop(this.id, this.name, this.ram);
+
+  void printDetails() {
+    print("ID: $id, Name: $name, RAM: $ram");
+  }
+}
+
+void main() {
+  // Create three Laptop objects
+  Laptop laptop1 = Laptop(1, "Dell XPS 13", 16);
+  Laptop laptop2 = Laptop(2, "HP Spectre x360", 8);
+  Laptop laptop3 = Laptop(3, "MacBook Air", 8);
+
+  // Print details of each Laptop using the printDetails method
+  laptop1.printDetails();
+  laptop2.printDetails();
+  laptop3.printDetails();
+}
